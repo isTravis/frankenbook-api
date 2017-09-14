@@ -61,6 +61,7 @@ sequelize.sync({ force: true })
 			description: 'Emerging Frankensteinian technologies, from AI to geoengineering, plus historical technologies connected to the novel.',
 			icon: 'tech',
 			color: '#c0392b',
+			isEditorial: true,
 		},
 		{
 			title: 'Science',
@@ -68,6 +69,7 @@ sequelize.sync({ force: true })
 			description: 'Natural science today and in the past, from ancients and alchemists to Romantic scientists like Davy, Lamarck, and the Herschels.',
 			icon: 'science',
 			color: '#d35400',
+			isEditorial: true,
 		},
 		{
 			title: 'Health & Medicine',
@@ -75,6 +77,7 @@ sequelize.sync({ force: true })
 			description: 'Digging into Frankenstein’s preoccupation with health, disease, and the body.',
 			icon: 'health',
 			color: '#8e44ad',
+			isEditorial: true,
 		},
 		{
 			title: 'Philosophy & Politics',
@@ -82,6 +85,7 @@ sequelize.sync({ force: true })
 			description: 'From Locke and Rousseau to Sartre and Nussbaum, the big ideas that animate Frankenstein, and that help us reframe and reinterpret the novel today.',
 			icon: 'philosophy',
 			color: '#2980b9',
+			isEditorial: true,
 		},
 		{
 			title: 'Mary Shelley',
@@ -89,6 +93,7 @@ sequelize.sync({ force: true })
 			description: 'The woman at the heart of it all: Mary Shelley’s life; her trials, travails, and adventures; her friends and family; and her literary oeuvre.',
 			icon: 'shelley',
 			color: '#16a085',
+			isEditorial: true,
 		},
 		{
 			title: 'Influences & Adaptations',
@@ -96,6 +101,7 @@ sequelize.sync({ force: true })
 			description: 'Which stories, novels, and poems influenced Shelley when she was writing Frankenstein? How has Frankenstein echoed and proliferated throughout pop culture and public discourse over the past 200 years?',
 			icon: 'influence',
 			color: '#27ae60',
+			isEditorial: true,
 		},
 		{
 			title: 'Equity & Inclusion',
@@ -103,6 +109,7 @@ sequelize.sync({ force: true })
 			description: 'Frankenstein is a poignant story about the pain and destruction wrought by prejudice and social exclusion, written by a woman living in a deeply inequitable culture. How does the novel illuminate these issues, and how have people continued to deploy Frankenstein as a symbol in the struggle for justice?  ',
 			icon: 'equity',
 			color: '#1abc9c',
+			isEditorial: true,
 		},
 		{
 			title: 'Motivations & Sentiments',
@@ -110,6 +117,7 @@ sequelize.sync({ force: true })
 			description: 'The emotions, values, ideals, and obsessions that drive human ingenuity, from the tortured and inspired character of Victor Frankenstein, to the Romantic scientists of Mary Shelley’s day, to the creators and innovators of the twenty-first century.',
 			icon: 'motivations',
 			color: '#3498db',
+			isEditorial: true,
 		}
 
 	];

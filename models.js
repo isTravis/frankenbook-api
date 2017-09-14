@@ -94,6 +94,7 @@ const Label = sequelize.define('Label', {
 	description: { type: Sequelize.TEXT },
 	icon: { type: Sequelize.STRING },
 	color: { type: Sequelize.STRING },
+	isEditorial: { type: Sequelize.BOOLEAN },
 });
 
 const DiscussionLabel = sequelize.define('DiscussionLabel', {
@@ -105,6 +106,7 @@ const DiscussionLabel = sequelize.define('DiscussionLabel', {
 }, {
 	indexes: [
 		{ fields: ['labelId'], method: 'BTREE' },
+		{ fields: ['discussionId'], method: 'BTREE' },
 	]
 });
 

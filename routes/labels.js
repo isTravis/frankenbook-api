@@ -1,31 +1,24 @@
 import app from '../server';
 import { Label, Discussion, User } from '../models';
 
-app.get('/labels/:slugs', (req, res)=> {
+// app.get('/labels/:slugs', (req, res)=> {
+// app.get('/labels/:slugs', (req, res)=> {
+function getLabels(req, res) {
 	console.time('testLabel');
-	const slugs = req.params.slugs.split('+');
-	console.log(slugs);
+	const slugs = (req.params && req.params.slugs && req.params.slugs.split('+')) || [];
+	// console.log(slugs);
+	// We want to eventually also get all labels that are owned/followed by author here. So we can put them in dropdown.
+	
 	Label.findAll({
 		where: {
-			slug: { $in: slugs }
+			$or: {
+				slug: { $in: slugs },
+				isEditorial: true,
+			},
 		},
 		attributes: {
 			exclude: ['createdAt', 'updatedAt']
-		},
-		include: [
-			{
-				model: Discussion,
-				as: 'discussions',
-				through: { attributes: [] },
-				include: [
-					{
-						model: User,
-						as: 'author',
-						attributes: ['id', 'avatar', 'initials', 'slug', 'fullName'],
-					},
-				]
-			}
-		],
+		}
 	})
 	.then((labels)=> {
 		console.timeEnd('testLabel');
@@ -34,4 +27,7 @@ app.get('/labels/:slugs', (req, res)=> {
 	.catch((err)=> {
 		return res.status(500).json(err);
 	});
-});
+}
+
+app.get('/labels', getLabels);
+app.get('/labels/:slugs', getLabels);
