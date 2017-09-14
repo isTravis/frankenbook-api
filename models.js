@@ -118,6 +118,9 @@ Discussion.belongsTo(User, { onDelete: 'CASCADE', as: 'author', foreignKey: 'use
 Label.belongsToMany(Discussion, { onDelete: 'CASCADE', as: 'discussions', through: 'DiscussionLabel', foreignKey: 'labelId' });
 Discussion.belongsToMany(Label, { onDelete: 'CASCADE', as: 'labels', through: 'DiscussionLabel', foreignKey: 'discussionId' });
 
+/* Added so we can query count of discussions from Label */
+Label.hasMany(DiscussionLabel, { onDelete: 'CASCADE', as: 'discussionLabels', foreignKey: 'labelId' });
+
 const db = {
 	User: User,
 	Discussion: Discussion,

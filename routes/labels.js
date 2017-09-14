@@ -1,5 +1,5 @@
 import app from '../server';
-import { Label, Discussion, User } from '../models';
+import { Label, DiscussionLabel, sequelize } from '../models';
 
 // app.get('/labels/:slugs', (req, res)=> {
 // app.get('/labels/:slugs', (req, res)=> {
@@ -7,8 +7,10 @@ function getLabels(req, res) {
 	console.time('testLabel');
 	const slugs = (req.params && req.params.slugs && req.params.slugs.split('+')) || [];
 	// console.log(slugs);
-	// We want to eventually also get all labels that are owned/followed by author here. So we can put them in dropdown.
-	
+	// We want to eventually also get all labels 
+	// that are owned/followed by author here. 
+	// So we can put them in dropdown.
+
 	Label.findAll({
 		where: {
 			$or: {
@@ -16,9 +18,21 @@ function getLabels(req, res) {
 				isEditorial: true,
 			},
 		},
+		group: ['Label.id'],
 		attributes: {
+			include: [
+				'id', 'title', 'slug', 'description', 'icon', 'color', 'isEditorial',
+				[sequelize.fn('COUNT', sequelize.col('discussionLabels.labelId')), 'discussionsCount']
+			],
 			exclude: ['createdAt', 'updatedAt']
-		}
+		},
+		include: [
+			{
+				model: DiscussionLabel,
+				attributes: [],
+				as: 'discussionLabels',
+			}
+		]
 	})
 	.then((labels)=> {
 		console.timeEnd('testLabel');
