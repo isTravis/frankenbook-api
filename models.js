@@ -24,11 +24,7 @@ const id = {
 };
 
 const User = sequelize.define('User', {
-	id: {
-		primaryKey: true,
-		type: Sequelize.UUID,
-		defaultValue: Sequelize.UUIDV4,
-	},
+	id: id,
 	slug: {
 		type: Sequelize.TEXT,
 		unique: true,
@@ -43,7 +39,7 @@ const User = sequelize.define('User', {
 	lastName: { type: Sequelize.TEXT, allowNull: false },
 	fullName: { type: Sequelize.TEXT, allowNull: false },
 	initials: { type: Sequelize.STRING, allowNull: false },
-	avatar: { type: Sequelize.TEXT, allowNull: false },
+	avatar: { type: Sequelize.TEXT },
 	bio: { type: Sequelize.TEXT },
 	email: {
 		type: Sequelize.TEXT,
@@ -68,11 +64,63 @@ const User = sequelize.define('User', {
 passportLocalSequelize.attachToUser(User, {
 	usernameField: 'email',
 	hashField: 'hash',
-	saltField: 'salt'
+	saltField: 'salt',
+	digest: 'sha1',
 });
+
+const Discussion = sequelize.define('Discussion', {
+	id: id,
+	anchor: { type: Sequelize.STRING, allowNull: false },
+	content: { type: Sequelize.JSONB },
+	parentId: { type: Sequelize.UUID },
+
+	/* Set by Associations */
+	userId: { type: Sequelize.UUID, allowNull: false },
+});
+
+const Label = sequelize.define('Label', {
+	id: id,
+	title: { type: Sequelize.TEXT, allowNull: false },
+	slug: {
+		type: Sequelize.TEXT,
+		unique: true,
+		allowNull: false,
+		validate: {
+			isLowercase: true,
+			len: [1, 280],
+			is: /^(?=.*[a-zA-Z])[a-zA-Z0-9-]+$/, // Must contain at least one letter, alphanumeric and underscores and hyphens
+		},
+	},
+	description: { type: Sequelize.TEXT },
+	icon: { type: Sequelize.STRING },
+	color: { type: Sequelize.STRING },
+});
+
+const DiscussionLabel = sequelize.define('DiscussionLabel', {
+	id: id,
+
+	/* Set by Associations */
+	discussionId: { type: Sequelize.UUID, allowNull: false },
+	labelId: { type: Sequelize.UUID, allowNull: false },
+}, {
+	indexes: [
+		{ fields: ['labelId'], method: 'BTREE' },
+	]
+});
+
+/*  Users can have many Discussions. Discussions belong to a single User. */
+User.hasMany(Discussion, { onDelete: 'CASCADE', as: 'discussions', foreignKey: 'userId' });
+Discussion.belongsTo(User, { onDelete: 'CASCADE', as: 'author', foreignKey: 'userId' });
+
+/* Discussions can have many Labels. Labels can belong to many Discussions. */
+Label.belongsToMany(Discussion, { onDelete: 'CASCADE', as: 'discussions', through: 'DiscussionLabel', foreignKey: 'labelId' });
+Discussion.belongsToMany(Label, { onDelete: 'CASCADE', as: 'labels', through: 'DiscussionLabel', foreignKey: 'discussionId' });
 
 const db = {
 	User: User,
+	Discussion: Discussion,
+	DiscussionLabel: DiscussionLabel,
+	Label: Label,
 };
 
 db.sequelize = sequelize;

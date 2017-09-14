@@ -104,6 +104,7 @@ app.use((err, req, res, next)=> {
 /* API Endpoints */
 /* ------------------- */
 require('./routes/users.js');
+require('./routes/labels.js');
 
 /* ------------------- */
 /* ------------------- */
