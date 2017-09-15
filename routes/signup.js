@@ -5,26 +5,11 @@ import { sequelize, Signup, User } from '../models';
 
 const client = new postmark.Client(process.env.POSTMARK_API_KEY);
 
-app.get('/signup', (req, res)=> {
-	Signup.findOne({ 
-		where: { hash: req.query.hash, completed: false },
-		attributes: ['email', 'hash'] 
-	})
-	.then(function(signUpData) {
-		if (!signUpData) { return res.status(500).json('Hash not valid'); }
-		return res.status(201).json(signUpData);
-	})
-	.catch(function(err) {
-		console.error('Error in get signUp: ', err);
-		return res.status(500).json(err.message);
-	});
-});
-
 app.post('/signup', (req, res)=> {
 	// First, try to update the emailSentCount.
 	// If there are no records to update, then we create a new one.
 	// If this fails, it is because the email must be unique and it is already used
-	const email = req.body.email.toLowerCase();
+	const email = req.body.email.toLowerCase().trim();
 	User.findOne({
 		where: { email: email }
 	})
@@ -68,3 +53,17 @@ app.post('/signup', (req, res)=> {
 	});
 });
 
+app.get('/signup/:hash', (req, res)=> {
+	Signup.findOne({ 
+		where: { hash: req.params.hash, completed: false },
+		attributes: ['email', 'hash'] 
+	})
+	.then(function(signUpData) {
+		if (!signUpData) { return res.status(500).json('Hash not valid'); }
+		return res.status(201).json(signUpData);
+	})
+	.catch(function(err) {
+		console.error('Error in get signUp: ', err);
+		return res.status(500).json(err.message);
+	});
+});

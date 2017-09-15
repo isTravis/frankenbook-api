@@ -39,7 +39,13 @@ function getLabels(req, res) {
 		console.timeEnd('testLabel');
 		return res.status(201).json({
 			labelsData: labels,
-			loginData: user
+			loginData: {
+				...user,
+				createdAt: undefined,
+				updatedAt: undefined,
+				hash: undefined,
+				salt: undefined,
+			}
 		});
 	})
 	.catch((err)=> {
