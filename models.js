@@ -110,6 +110,22 @@ const DiscussionLabel = sequelize.define('DiscussionLabel', {
 	]
 });
 
+const Signup = sequelize.define('Signup', {
+	id: id,
+	email: {
+		type: Sequelize.TEXT,
+		allowNull: false,
+		unique: true,
+		validate: {
+			isEmail: true,
+			isLowercase: true,
+		}
+	},
+	hash: { type: Sequelize.TEXT },
+	count: { type: Sequelize.INTEGER },
+	completed: { type: Sequelize.BOOLEAN },
+});
+
 /*  Users can have many Discussions. Discussions belong to a single User. */
 User.hasMany(Discussion, { onDelete: 'CASCADE', as: 'discussions', foreignKey: 'userId' });
 Discussion.belongsTo(User, { onDelete: 'CASCADE', as: 'author', foreignKey: 'userId' });
@@ -122,10 +138,11 @@ Discussion.belongsToMany(Label, { onDelete: 'CASCADE', as: 'labels', through: 'D
 Label.hasMany(DiscussionLabel, { onDelete: 'CASCADE', as: 'discussionLabels', foreignKey: 'labelId' });
 
 const db = {
-	User: User,
 	Discussion: Discussion,
 	DiscussionLabel: DiscussionLabel,
 	Label: Label,
+	Signup: Signup,
+	User: User,
 };
 
 db.sequelize = sequelize;
