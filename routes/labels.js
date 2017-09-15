@@ -40,7 +40,7 @@ function getLabels(req, res) {
 		return res.status(201).json({
 			labelsData: labels,
 			loginData: {
-				...user,
+				...user.toJSON(),
 				createdAt: undefined,
 				updatedAt: undefined,
 				hash: undefined,

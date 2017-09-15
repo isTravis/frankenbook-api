@@ -7,6 +7,7 @@ const annotationsJSON = require('../site/static/sourceAnnotations.json');
 // console.log(annotationsJSON);
 
 const maxLabels = 4;
+const maxReplies = 5;
 
 const authors = annotationsJSON.reduce((prev, curr)=> {
 	if (curr.author) {
@@ -55,6 +56,7 @@ sequelize.sync({ force: true })
 			userId: authors[item.author].id,
 			content: item.content,
 			anchor: item.anchor,
+			createdAt: new Date() - (Math.random() * 1000000000) - 1000000000,
 		};
 	});
 	return Discussion.bulkCreate(discussions);
@@ -152,6 +154,28 @@ sequelize.sync({ force: true })
 })
 .then(()=> {
 	console.log('Created DiscussionLabels');
+	return Discussion.findAll({ attributes: ['id', 'anchor'] })
+	.then((discussions)=> {
+		const createDiscussionReplies = discussions.map((discussion)=> {
+			return User.findAll({ order: [sequelize.fn('RANDOM')], limit: Math.ceil(Math.random() * maxReplies) })
+			.then((replyAuthors)=> {
+				const creations = replyAuthors.map((author)=> {
+					return {
+						anchor: discussion.anchor,
+						content: { type: 'text', content: faker.lorem.paragraph() },
+						parentId: discussion.id,
+						userId: author.id,
+						createdAt: new Date() - (Math.random() * 1000000000),
+					};
+				});
+				return Discussion.bulkCreate(creations);
+			});
+		});
+		return Promise.all(createDiscussionReplies);
+	});
+})
+.then(()=> {
+	console.log('Created Replies');
 	console.log('Done');
 })
 .catch((err)=> {
