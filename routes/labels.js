@@ -32,13 +32,18 @@ function getLabels(req, res) {
 				attributes: [],
 				as: 'discussionLabels',
 			}
-		]
+		],
 	})
 	.then((labels)=> {
 		console.timeEnd('testLabel');
-		return res.status(201).json(labels);
+		const user = req.user;
+		return res.status(201).json({
+			labelsData: labels,
+			loginData: user
+		});
 	})
 	.catch((err)=> {
+		console.log(err);
 		return res.status(500).json(err);
 	});
 }
