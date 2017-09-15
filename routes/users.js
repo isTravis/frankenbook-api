@@ -1,7 +1,7 @@
 import Promise from 'bluebird';
 import passport from 'passport';
 import app from '../server';
-import { User, Signup } from '../models';
+import { User, Signup, Discussion } from '../models';
 
 app.post('/users', (req, res)=> {
 	// Check that hash and email sync up
@@ -68,6 +68,12 @@ app.get('/users/:slug', (req, res)=> {
 		attributes: {
 			exclude: ['salt', 'hash', 'email', 'createdAt', 'updatedAt']
 		},
+		include: [
+			{
+				model: Discussion,
+				as: 'discussions'
+			}
+		]
 	})
 	.then((collection)=> {
 		console.timeEnd('testUser');
