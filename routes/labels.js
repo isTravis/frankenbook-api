@@ -37,10 +37,11 @@ function getLabels(req, res) {
 	})
 	.then((labels)=> {
 		console.timeEnd('testLabel');
+		const userData = user ? user.toJSON : {};
 		return res.status(201).json({
 			labelsData: labels,
 			loginData: {
-				...user.toJSON(),
+				...userData,
 				createdAt: undefined,
 				updatedAt: undefined,
 				hash: undefined,
