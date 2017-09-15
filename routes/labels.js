@@ -5,6 +5,7 @@ import { Label, DiscussionLabel, sequelize } from '../models';
 // app.get('/labels/:slugs', (req, res)=> {
 function getLabels(req, res) {
 	console.time('testLabel');
+	const user = req.user;
 	const slugs = (req.params && req.params.slugs && req.params.slugs.split('+')) || [];
 	// console.log(slugs);
 	// We want to eventually also get all labels 
@@ -36,7 +37,6 @@ function getLabels(req, res) {
 	})
 	.then((labels)=> {
 		console.timeEnd('testLabel');
-		const user = req.user;
 		return res.status(201).json({
 			labelsData: labels,
 			loginData: user

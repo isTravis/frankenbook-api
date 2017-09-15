@@ -107,6 +107,7 @@ require('./routes/discussions.js');
 require('./routes/labels.js');
 require('./routes/login.js');
 require('./routes/logout.js');
+require('./routes/signup.js');
 require('./routes/users.js');
 
 /* ------------------- */
