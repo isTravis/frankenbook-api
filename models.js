@@ -23,6 +23,11 @@ const id = {
 	defaultValue: Sequelize.UUIDV4,
 };
 
+const Content = sequelize.define('Content', {
+	id: id,
+	json: { type: Sequelize.JSONB },
+});
+
 const User = sequelize.define('User', {
 	id: id,
 	slug: {
@@ -140,6 +145,7 @@ Label.hasMany(DiscussionLabel, { onDelete: 'CASCADE', as: 'discussionLabels', fo
 Discussion.hasMany(Discussion, { onDelete: 'CASCADE', as: 'replies', foreignKey: 'parentId' });
 
 const db = {
+	Content: Content,
 	Discussion: Discussion,
 	DiscussionLabel: DiscussionLabel,
 	Label: Label,
