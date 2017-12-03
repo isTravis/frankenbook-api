@@ -1,15 +1,112 @@
-import Promise from 'bluebird';
+// import Promise from 'bluebird';
 import faker from 'faker';
 import uuidv4 from 'uuid/v4';
-import { sequelize, User, Discussion, Label, DiscussionLabel } from './models';
+import { sequelize, User, Discussion, Label, DiscussionLabel, Content } from './models';
 
-const annotationsJSON = require('../site/static/sourceAnnotations.json');
-// console.log(annotationsJSON);
+const bookSourceJSON = require('../site/static/bookSourceEditor.json');
+const annotationsJSON = require('../site/static/sourceAnnotationsEditor.json');
+
+const annotationsJSONWithIds = annotationsJSON.map((item)=> {
+	return { ...item, id: uuidv4() };
+});
+
+const labels = [
+	{
+		id: uuidv4(),
+		conversionKey: 'Tech',
+		title: 'Technology',
+		slug: 'technology',
+		description: 'Historical and emerging Frankensteinian technologies, from steam engines to AI.',
+		icon: 'tech',
+		color: '#D34F27',
+		isEditorial: true,
+	},
+	{
+		id: uuidv4(),
+		conversionKey: 'Science',
+		title: 'Science',
+		slug: 'science',
+		description: 'Natural science yesterday and today, from ancients and alchemists to Humphry Davy to Marie Curie.',
+		icon: 'science',
+		color: '#E29E25',
+		isEditorial: true,
+	},
+	{
+		id: uuidv4(),
+		conversionKey: 'HandM',
+		title: 'Health & Medicine',
+		slug: 'healthmed',
+		description: 'Digging into Frankenstein’s preoccupation with health, disease, and the body.',
+		icon: 'health',
+		color: '#184B60',
+		isEditorial: true,
+	},
+	{
+		id: uuidv4(),
+		conversionKey: 'PandP',
+		title: 'Philosophy & Politics',
+		slug: 'philpol',
+		description: 'The big ideas and political debates that animate Frankenstein and help us understand it today.',
+		icon: 'philosophy',
+		color: '#52BE94',
+		isEditorial: true,
+	},
+	{
+		id: uuidv4(),
+		conversionKey: 'Shelley',
+		title: 'Mary Shelley',
+		slug: 'mary',
+		description: 'The woman at the heart of it all: Mary Shelley’s adventures, relationships, and writing. ',
+		icon: 'shelley',
+		color: '#66AECD',
+		isEditorial: true,
+	},
+	{
+		id: uuidv4(),
+		conversionKey: 'IandA',
+		title: 'Influences & Adaptations',
+		slug: 'infladap',
+		description: 'The stories that influenced Shelley, and how Frankenstein has echoed throughout culture over the past 200 years.',
+		icon: 'influence',
+		color: '#471A0D',
+		isEditorial: true,
+	},
+	{
+		id: uuidv4(),
+		conversionKey: 'EandI',
+		title: 'Equity & Inclusion',
+		slug: 'equitincl',
+		description: 'Prejudice, social exclusion, and struggles for justice in the novel, in the Romantic Era, and today.',
+		icon: 'equity',
+		color: '#A74F83',
+		isEditorial: true,
+	},
+	{
+		id: uuidv4(),
+		conversionKey: 'MandS',
+		title: 'Motivations & Sentiments',
+		slug: 'motivments',
+		description: 'The emotions, values, ideals, and obsessions that drive human ingenuity.',
+		icon: 'motivations',
+		color: '#2B7557',
+		isEditorial: true,
+	}
+
+];
+
+function findLabelId(key) {
+	const output = labels.reduce((prev, curr)=> {
+		if (curr.conversionKey === key) { return curr.id; }
+		return prev;
+	}, '');
+	if (!output) { console.log('What happened with that label?!', key); }
+	return output;
+}
 
 const maxLabels = 4;
 const maxReplies = 5;
 
-const authors = annotationsJSON.reduce((prev, curr)=> {
+const authors = annotationsJSONWithIds.reduce((prev, curr)=> {
 	if (curr.author) {
 		const fullName = curr.author.replace('.', '');
 		const firstName = fullName.split(' ')[0];
@@ -42,6 +139,11 @@ const authors = annotationsJSON.reduce((prev, curr)=> {
 sequelize.sync({ force: true })
 .then(()=> {
 	/* Create Users */
+	return Content.create({ json: bookSourceJSON });
+})
+.then(()=> {
+	console.log('Created Content');
+	/* Create Users */
 	const users = Object.keys(authors).map((item)=> {
 		return authors[item];
 	});
@@ -49,133 +151,96 @@ sequelize.sync({ force: true })
 })
 .then(()=> {
 	console.log('Created Users');
-	const discussions = annotationsJSON.filter((item)=> {
+	const discussions = annotationsJSONWithIds.filter((item)=> {
 		return item.author;
 	}).map((item)=> {
 		return {
+			id: item.id,
 			userId: authors[item.author].id,
 			content: item.content,
 			anchor: item.anchor,
-			createdAt: new Date() - (Math.random() * 1000000000) - 1000000000,
+			createdAt: new Date('2017-01-01T00:00:00+00:00'),
 		};
 	});
 	return Discussion.bulkCreate(discussions);
 })
 .then(()=> {
 	console.log('Created Discussions');
-
-	const labels = [
-		{
-			title: 'Technology',
-			slug: 'technology',
-			description: 'Emerging Frankensteinian technologies, from AI to geoengineering, plus historical technologies connected to the novel.',
-			icon: 'tech',
-			color: '#c0392b',
-			isEditorial: true,
-		},
-		{
-			title: 'Science',
-			slug: 'science',
-			description: 'Natural science today and in the past, from ancients and alchemists to Romantic scientists like Davy, Lamarck, and the Herschels.',
-			icon: 'science',
-			color: '#d35400',
-			isEditorial: true,
-		},
-		{
-			title: 'Health & Medicine',
-			slug: 'healthmed',
-			description: 'Digging into Frankenstein’s preoccupation with health, disease, and the body.',
-			icon: 'health',
-			color: '#8e44ad',
-			isEditorial: true,
-		},
-		{
-			title: 'Philosophy & Politics',
-			slug: 'philpol',
-			description: 'From Locke and Rousseau to Sartre and Nussbaum, the big ideas that animate Frankenstein, and that help us reframe and reinterpret the novel today.',
-			icon: 'philosophy',
-			color: '#2980b9',
-			isEditorial: true,
-		},
-		{
-			title: 'Mary Shelley',
-			slug: 'mary',
-			description: 'The woman at the heart of it all: Mary Shelley’s life; her trials, travails, and adventures; her friends and family; and her literary oeuvre.',
-			icon: 'shelley',
-			color: '#16a085',
-			isEditorial: true,
-		},
-		{
-			title: 'Influences & Adaptations',
-			slug: 'infladap',
-			description: 'Which stories, novels, and poems influenced Shelley when she was writing Frankenstein? How has Frankenstein echoed and proliferated throughout pop culture and public discourse over the past 200 years?',
-			icon: 'influence',
-			color: '#27ae60',
-			isEditorial: true,
-		},
-		{
-			title: 'Equity & Inclusion',
-			slug: 'equitincl',
-			description: 'Frankenstein is a poignant story about the pain and destruction wrought by prejudice and social exclusion, written by a woman living in a deeply inequitable culture. How does the novel illuminate these issues, and how have people continued to deploy Frankenstein as a symbol in the struggle for justice?  ',
-			icon: 'equity',
-			color: '#1abc9c',
-			isEditorial: true,
-		},
-		{
-			title: 'Motivations & Sentiments',
-			slug: 'motivments',
-			description: 'The emotions, values, ideals, and obsessions that drive human ingenuity, from the tortured and inspired character of Victor Frankenstein, to the Romantic scientists of Mary Shelley’s day, to the creators and innovators of the twenty-first century.',
-			icon: 'motivations',
-			color: '#3498db',
-			isEditorial: true,
-		}
-
-	];
 	return Label.bulkCreate(labels);
 })
 .then(()=> {
 	console.log('Created Labels');
-	return Discussion.findAll({ attributes: ['id'] })
-	.then((discussions)=> {
-		const createDiscussionLabels = discussions.map((discussion)=> {
-			return Label.findAll({ order: [sequelize.fn('RANDOM')], limit: Math.ceil(Math.random() * maxLabels) })
-			.then((labels)=> {
-				const creations = labels.map((label)=> {
-					return {
-						discussionId: discussion.id,
-						labelId: label.id,
-					};
+	const createDiscussionLabels = [];
+	annotationsJSONWithIds.filter((item)=> {
+		return item.author;
+	})
+	.forEach((discussion)=> {
+		if (discussion.labels) {
+			const labelsKeys = discussion.labels.split(',');
+			labelsKeys.forEach((labelKey)=> {
+				// console.log(discussion.id, findLabelId(labelKey));
+				createDiscussionLabels.push({
+					discussionId: discussion.id,
+					labelId: findLabelId(labelKey)
 				});
-				return DiscussionLabel.bulkCreate(creations);
 			});
-		});
-		return Promise.all(createDiscussionLabels);
+		}
 	});
+	// return true;
+	return DiscussionLabel.bulkCreate(createDiscussionLabels);
+	// return Discussion.findAll({ attributes: ['id'] })
+	// .then((discussions)=> {
+	// 	const createDiscussionLabels = [];
+	// 	discussions.forEach((discussion)=> {
+	// 		if (discussion.labels) {
+
+
+	// 			const labelsKeys = discussion.labels.split(',');
+	// 			return {
+	// 				discussionId: discussion.id,
+	// 				labelId: findLabelId(discussion)
+	// 			}
+	// 		}
+
+	// 		return Label.findAll({ order: [sequelize.fn('RANDOM')], limit: Math.ceil(Math.random() * maxLabels) })
+	// 		.then((labels)=> {
+	// 			const creations = labels.map((label)=> {
+	// 				return {
+	// 					discussionId: discussion.id,
+	// 					labelId: label.id,
+	// 				};
+	// 			});
+	// 			return DiscussionLabel.bulkCreate(creations);
+	// 		});
+	// 	});
+	// 	return Promise.all(createDiscussionLabels);
+	// });
 })
 .then(()=> {
 	console.log('Created DiscussionLabels');
-	return Discussion.findAll({ attributes: ['id', 'anchor'] })
-	.then((discussions)=> {
-		const createDiscussionReplies = discussions.map((discussion)=> {
-			return User.findAll({ order: [sequelize.fn('RANDOM')], limit: Math.ceil(Math.random() * maxReplies) })
-			.then((replyAuthors)=> {
-				const creations = replyAuthors.map((author)=> {
-					return {
-						anchor: discussion.anchor,
-						content: { type: 'text', content: faker.lorem.paragraph() },
-						parentId: discussion.id,
-						userId: author.id,
-						createdAt: new Date() - (Math.random() * 1000000000),
-					};
-				});
-				return Discussion.bulkCreate(creations);
-			});
-		});
-		return Promise.all(createDiscussionReplies);
-	});
+	return true;
+	// return Discussion.findAll({ attributes: ['id', 'anchor'] })
+	// .then((discussions)=> {
+	// 	const createDiscussionReplies = discussions.map((discussion)=> {
+	// 		return User.findAll({ order: [sequelize.fn('RANDOM')], limit: Math.ceil(Math.random() * maxReplies) })
+	// 		.then((replyAuthors)=> {
+	// 			const creations = replyAuthors.map((author)=> {
+	// 				return {
+	// 					anchor: discussion.anchor,
+	// 					content: { type: 'text', content: faker.lorem.paragraph() },
+	// 					parentId: discussion.id,
+	// 					userId: author.id,
+	// 					createdAt: new Date() - (Math.random() * 1000000000),
+	// 				};
+	// 			});
+	// 			return Discussion.bulkCreate(creations);
+	// 		});
+	// 	});
+	// 	return Promise.all(createDiscussionReplies);
+	// });
 })
 .then(()=> {
-	console.log('Created Replies');
+	// console.log('Created Replies');
 	console.log('Done');
 })
 .catch((err)=> {
