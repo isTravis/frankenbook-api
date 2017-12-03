@@ -28,7 +28,7 @@ const labels = [
 		slug: 'science',
 		description: 'Natural science yesterday and today, from ancients and alchemists to Humphry Davy to Marie Curie.',
 		icon: 'science',
-		color: '#E29E25',
+		color: '#A9BB38',
 		isEditorial: true,
 	},
 	{
