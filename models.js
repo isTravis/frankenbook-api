@@ -79,6 +79,7 @@ const Discussion = sequelize.define('Discussion', {
 	text: { type: Sequelize.TEXT },
 	content: { type: Sequelize.JSONB },
 	parentId: { type: Sequelize.UUID },
+	endorsed: { type: Sequelize.BOOLEAN },
 
 	/* Set by Associations */
 	userId: { type: Sequelize.UUID, allowNull: false },

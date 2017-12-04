@@ -97,8 +97,8 @@ const labels = [
 		title: 'Community',
 		slug: 'community',
 		description: 'Annotations made by our community',
-		icon: 'community',
-		color: '#DBC8B2',
+		icon: 'earth',
+		color: '#E29E25',
 		isEditorial: false,
 	}
 
@@ -181,6 +181,7 @@ sequelize.sync({ force: true })
 				return prev + extractText(curr);
 			}, ''),
 			anchor: item.anchor,
+			endorsed: true,
 			createdAt: new Date('2017-01-01T00:00:00+00:00'),
 		};
 	});
