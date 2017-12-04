@@ -90,6 +90,16 @@ const labels = [
 		icon: 'motivations',
 		color: '#2B7557',
 		isEditorial: true,
+	},
+	{
+		id: 'fff8d9aa-fda5-48f1-a3e4-a8ef10c7d257',
+		conversionKey: '',
+		title: 'Community',
+		slug: 'community',
+		description: 'Annotations made by our community',
+		icon: 'community',
+		color: '#DBC8B2',
+		isEditorial: false,
 	}
 
 ];
@@ -101,6 +111,15 @@ function findLabelId(key) {
 	}, '');
 	if (!output) { console.log('What happened with that label?!', key); }
 	return output;
+}
+
+function extractText(node) {
+	if (node.content) {
+		return node.content.reduce((prev, curr)=> {
+			return prev + extractText(curr);
+		}, '');
+	}
+	return node.text;
 }
 
 const maxLabels = 4;
@@ -158,6 +177,9 @@ sequelize.sync({ force: true })
 			id: item.id,
 			userId: authors[item.author].id,
 			content: item.content,
+			text: item.content.content.reduce((prev, curr)=> {
+				return prev + extractText(curr);
+			}, ''),
 			anchor: item.anchor,
 			createdAt: new Date('2017-01-01T00:00:00+00:00'),
 		};

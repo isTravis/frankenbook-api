@@ -76,6 +76,7 @@ passportLocalSequelize.attachToUser(User, {
 const Discussion = sequelize.define('Discussion', {
 	id: id,
 	anchor: { type: Sequelize.STRING, allowNull: false },
+	text: { type: Sequelize.TEXT },
 	content: { type: Sequelize.JSONB },
 	parentId: { type: Sequelize.UUID },
 
