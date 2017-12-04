@@ -70,6 +70,38 @@ app.post('/discussions', (req, res)=> {
 	});
 });
 
+app.put('/discussions', (req, res)=> {
+	const user = req.user || {};
+
+	// Filter to only allow certain fields to be updated
+	const updatedDiscussion = {};
+	Object.keys(req.body).forEach((key)=> {
+		if (['content', 'text'].indexOf(key) > -1) {
+			updatedDiscussion[key] = req.body[key] && req.body[key].trim
+				? req.body[key].trim()
+				: req.body[key];
+		}
+	});
+	updatedDiscussion.updatedAt = new Date();
+
+	return Discussion.update(updatedDiscussion, {
+		where: {
+			id: req.body.id,
+			userId: user.id,
+		}
+	})
+	.then(()=> {
+		return res.status(201).json({
+			...updatedDiscussion,
+			id: req.body.id
+		});
+	})
+	.catch((err)=> {
+		console.log('Error putting Discussion', err);
+		return res.status(500).json(err);
+	});
+});
+
 app.get('/discussions/:labelSlugs', (req, res)=> {
 	console.time('testDiscussionsQuery');
 	const slugs = req.params.labelSlugs.split('+');
