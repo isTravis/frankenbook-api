@@ -104,6 +104,13 @@ const Label = sequelize.define('Label', {
 	isEditorial: { type: Sequelize.BOOLEAN },
 });
 
+const LabelAdmin = sequelize.define('LabelAdmin', {
+	id: id,
+	/* Set by Associations */
+	userId: { type: Sequelize.UUID, allowNull: false },
+	labelId: { type: Sequelize.UUID, allowNull: false },
+});
+
 const DiscussionLabel = sequelize.define('DiscussionLabel', {
 	id: id,
 
@@ -133,6 +140,10 @@ const Signup = sequelize.define('Signup', {
 	completed: { type: Sequelize.BOOLEAN },
 });
 
+/* Labels can have many Admins. Users can admin many labels. */
+User.belongsToMany(Label, { onDelete: 'CASCADE', as: 'labels', through: 'LabelAdmin', foreignKey: 'userId' });
+Label.belongsToMany(User, { onDelete: 'CASCADE', as: 'admins', through: 'LabelAdmin', foreignKey: 'labelId' });
+
 /*  Users can have many Discussions. Discussions belong to a single User. */
 User.hasMany(Discussion, { onDelete: 'CASCADE', as: 'discussions', foreignKey: 'userId' });
 Discussion.belongsTo(User, { onDelete: 'CASCADE', as: 'author', foreignKey: 'userId' });
@@ -151,6 +162,7 @@ const db = {
 	Discussion: Discussion,
 	DiscussionLabel: DiscussionLabel,
 	Label: Label,
+	LabelAdmin: LabelAdmin,
 	Signup: Signup,
 	User: User,
 };

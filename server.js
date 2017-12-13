@@ -103,6 +103,7 @@ app.use((err, req, res, next)=> {
 /* ------------------- */
 /* API Endpoints */
 /* ------------------- */
+require('./routes/admin.js');
 require('./routes/content.js');
 require('./routes/discussions.js');
 require('./routes/labels.js');

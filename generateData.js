@@ -99,7 +99,7 @@ const labels = [
 		description: 'Annotations made by our community',
 		icon: 'earth',
 		color: '#E29E25',
-		isEditorial: false,
+		isEditorial: true,
 	}
 
 ];
