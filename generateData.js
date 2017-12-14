@@ -1,7 +1,7 @@
 // import Promise from 'bluebird';
 import faker from 'faker';
 import uuidv4 from 'uuid/v4';
-import { sequelize, User, Discussion, Label, DiscussionLabel, Content } from './models';
+import { sequelize, User, Discussion, Label, DiscussionLabel, Content, LabelAdmin } from './models';
 
 const bookSourceJSON = require('../site/static/bookSourceEditor.json');
 const annotationsJSON = require('../site/static/sourceAnnotationsEditor.json');
@@ -264,6 +264,30 @@ sequelize.sync({ force: true })
 })
 .then(()=> {
 	// console.log('Created Replies');
+	return Label.findAll()
+	.then((labelsData)=> {
+		const findAdmins = User.findAll({
+			where: {
+				slug: { $in: ['ed-finn'] }
+			}
+		});
+		return Promise.all([labelsData, findAdmins]);
+	})
+	.then(([labelsData, adminsData])=> {
+		const labelAdminData = [];
+		adminsData.forEach((user)=> {
+			labelsData.forEach((label)=> {
+				labelAdminData.push({
+					userId: user.id,
+					labelId: label.id,
+				});
+			});
+		});
+		return LabelAdmin.bulkCreate(labelAdminData);
+	});
+})
+.then(()=> {
+	console.log('Created LabelAdmins');
 	console.log('Done');
 })
 .catch((err)=> {
