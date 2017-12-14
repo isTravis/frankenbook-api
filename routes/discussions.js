@@ -108,6 +108,7 @@ app.get('/discussions/:labelSlugs', (req, res)=> {
 	Discussion.findAll({
 		where: {
 			parentId: null,
+			flagged: { $not: true }
 		},
 		include: [
 			{
@@ -129,6 +130,9 @@ app.get('/discussions/:labelSlugs', (req, res)=> {
 			{
 				model: Discussion,
 				as: 'replies',
+				where: {
+					flagged: { $not: true }
+				},
 				separate: true,
 				include: [
 					{
