@@ -57,6 +57,7 @@ const whitelist = [
 	'http://localhost:8080',
 	'http://localhost:5000',
 	'https://frankenbook.pubpub.org',
+	'https://www.frankenbook.org',
 ];
 
 const corsOptions = {
