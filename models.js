@@ -57,6 +57,7 @@ const User = sequelize.define('User', {
 	},
 	location: { type: Sequelize.TEXT },
 	website: { type: Sequelize.TEXT },
+	website2: { type: Sequelize.TEXT },
 	facebook: { type: Sequelize.TEXT },
 	twitter: { type: Sequelize.TEXT },
 	github: { type: Sequelize.TEXT },
