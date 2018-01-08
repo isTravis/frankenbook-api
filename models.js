@@ -63,6 +63,8 @@ const User = sequelize.define('User', {
 	github: { type: Sequelize.TEXT },
 	orcid: { type: Sequelize.TEXT },
 	googleScholar: { type: Sequelize.TEXT },
+	resetHashExpiration: { type: Sequelize.DATE },
+	resetHash: { type: Sequelize.TEXT },
 	hash: { type: Sequelize.TEXT, allowNull: false },
 	salt: { type: Sequelize.TEXT, allowNull: false },
 });

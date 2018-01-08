@@ -110,6 +110,7 @@ require('./routes/discussions.js');
 require('./routes/labels.js');
 require('./routes/login.js');
 require('./routes/logout.js');
+require('./routes/passwordReset.js');
 require('./routes/signup.js');
 require('./routes/uploadPolicy.js');
 require('./routes/users.js');
